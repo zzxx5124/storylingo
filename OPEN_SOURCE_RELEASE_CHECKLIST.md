@@ -15,7 +15,7 @@
 
 - [x] 選定 Apache-2.0 並提交 `LICENSE`；若未來改採 AGPL-3.0，應在公開前另行替換並重新檢查第三方依賴。
 - [x] 確認 GitHub repository owner、名稱、可見性與預設分支：`zzxx5124/storylingo`、public、`main`。
-- [ ] 確認是否要保留完整 Git 歷史。若歷史包含私人網域、工作路徑或只供內部稽核的紀錄，建議用乾淨的 orphan history 發布目前可公開快照。
+- [x] 已決定不保留原始 Git 歷史；公開 repository 使用乾淨的 orphan history，避免帶入私人網域、工作路徑或內部稽核紀錄。
 - [x] 加入 Dependabot 設定；公開 repository 已由 GitHub 啟用 Secret scanning 與 push protection。
 - [ ] 若帳號方案支援，從 GitHub Settings → Code security 開啟 Dependabot security updates、automated security fixes 與 Private vulnerability reporting。
 - [ ] 依 owner 的維護習慣設定 GitHub branch protection 與 Private vulnerability reporting。
