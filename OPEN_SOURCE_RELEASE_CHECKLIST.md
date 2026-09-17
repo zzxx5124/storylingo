@@ -26,7 +26,7 @@
 1. 在獨立的公開暫存目錄建立乾淨快照，只複製 source、tests、migrations、deploy 範例、公開文件與 `docs/screenshots`。
 2. 排除 `.env`、runtime data、上傳檔案、log、測試結果、個人路徑、私人網域與外部服務的真實識別資訊。
 3. 對暫存目錄再次執行 secret scan、`git diff --check`、單元／後端測試與必要的 E2E。
-4. 加入 owner 確認的 `LICENSE`，初始化新的 Git 歷史，建立第一個標籤（例如 `v0.1.0-reference`）。
+4. 加入 owner 確認的 `LICENSE`，初始化新的 Git 歷史，建立通過 CI 的參考標籤（目前為 `v0.1.2-reference`）。
 5. 推送到空白 GitHub repository，先以 private／unlisted 方式檢查檔案、Actions、截圖與連結，再切換 public。
 6. 啟用 branch protection、Dependabot、Secret scanning，並在 README 寫明第一個可公開版本與已知限制。
 
