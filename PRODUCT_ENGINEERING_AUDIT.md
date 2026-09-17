@@ -186,8 +186,9 @@ Mobile 完整 E2E 首次有 4 項測試失敗：作者介紹定位撞到新的�
 - 已產生 `docs/screenshots/` 的首頁、作品詳情、Reader、作者工作台 Desktop／Mobile 合成截圖；截圖不使用真實帳號、作品資料或 secrets。
 - 已掃描目前已追蹤檔案與 reachable Git history 的常見 NVIDIA/OpenAI/AWS/GitHub token、私鑰與 secret assignment pattern：未偵測到實際值。忽略的本機 `.env` 仍含本機設定，不能加入公開快照。
 - 已建立 `<workspace-root>\StoryLingo-open-source-20260917` 的乾淨公開快照：排除 Git history、`.env`、資料庫、runtime data、上傳檔案、log、模型與私人 qualification evidence，並將私人網域／本機路徑泛化為 example 佔位值。
-- 尚未 push：目前 repository 沒有 GitHub remote；正式發布仍需 owner 選定 LICENSE（建議 Apache-2.0，或需要 network copyleft 時選 AGPL-3.0）、建立空白 repository 並提供 HTTPS／SSH remote URL。沒有這兩項資訊，不會猜測目的地或授權後替 owner 公開。
+- 已建立並推送至公開 repository [`zzxx5124/storylingo`](https://github.com/zzxx5124/storylingo)，預設分支為 `main`，採用 Apache-2.0；公開快照第一版標籤為 `v0.1.0-reference`。
+- GitHub 已確認 Secret scanning 與 push protection 開啟；Dependabot 設定已提交，但 Dependabot security updates／automated fixes 仍需 owner 在 GitHub Settings 依帳號方案確認。這個限制已記錄於公開檢查表，不把 API 404 誤報成已啟用。
 
-AUD-18 狀態為 **準備完成、等待 owner 的 repository URL 與授權決策**。在 push 前應於乾淨快照再次執行 secret scan、完整回歸與 `git diff --check`，並先以 private/unlisted repository 檢視檔案與 CI，再切換 public。這項工作不改回既有編輯保護、Reader、首頁或 Mobile 導覽設計，也不宣稱平台已經是 turnkey production SaaS。
+AUD-18 狀態為 **公開快照已發布、後續維運設定待 owner 確認**。公開快照使用 orphan history，排除私人環境與內部 evidence；這項工作不改回既有編輯保護、Reader、首頁或 Mobile 導覽設計，也不宣稱平台已經是 turnkey production SaaS。
 
 本次公開準備後的驗證：前端單元 94/94、語法／compile 通過；公開截圖產生 spec 1/1；受影響的登入／公開流程 60/60（單 worker）；Reader Desktop/Mobile 18/18（單 worker）。完整 394 項 E2E 在 16 workers 曾有瀏覽器資源造成的 context 啟動偶發失敗，單 worker 已完成 393 項，其唯一未進入斷言的 Reader case 另行重跑通過；因此不把平行 worker 的一次失敗記為產品 regression，但 CI 若資源有限應降低 workers 或重試。

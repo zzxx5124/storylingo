@@ -111,5 +111,7 @@ def test_generation_reuses_completed_units_on_second_run(tmp_path, monkeypatch):
         final_timing_path=str(tmp_path / "second.json"),
     )
 
-    assert calls == ["seg-1", "seg-2"]
+    # Synthesis units run concurrently; completion order is intentionally not
+    # part of the contract. The final concat still follows the source job order.
+    assert sorted(calls) == ["seg-1", "seg-2"]
     assert (tmp_path / "second.mp3").read_bytes() == b"joined"
