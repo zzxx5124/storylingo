@@ -188,7 +188,7 @@ Mobile 完整 E2E 首次有 4 項測試失敗：作者介紹定位撞到新的�
 - 已建立 `<workspace-root>\StoryLingo-open-source-20260917` 的乾淨公開快照：排除 Git history、`.env`、資料庫、runtime data、上傳檔案、log、模型與私人 qualification evidence，並將私人網域／本機路徑泛化為 example 佔位值。
 - 已建立並推送至公開 repository [`zzxx5124/storylingo`](https://github.com/zzxx5124/storylingo)，預設分支為 `main`，採用 Apache-2.0；目前通過 CI 的參考版本標籤為 `v0.1.2-reference`（commit `b1247af`）。
 - 已建立 GitHub release [`v0.1.2-reference`](https://github.com/zzxx5124/storylingo/releases/tag/v0.1.2-reference)，附上與公開快照一致的 ZIP 與 SHA256 檔案，方便在其他環境下載核對。
-- GitHub 已確認 Secret scanning 與 push protection 開啟；Dependabot 設定已提交，但 Dependabot security updates／automated fixes 仍需 owner 在 GitHub Settings 依帳號方案確認。這個限制已記錄於公開檢查表，不把 API 404 誤報成已啟用。
+- GitHub 已確認 Secret scanning 與 push protection 開啟，並已啟用 `main` branch protection（Pull Request、`backend-and-unit`／`e2e` CI、禁止 force push／刪除、linear history、conversation resolution）；Dependabot 設定已提交，但 Dependabot security updates／automated fixes 與 Private vulnerability reporting 仍需 owner 在 GitHub Settings 依帳號方案確認。這個限制已記錄於公開檢查表，不把 API 404 誤報成已啟用。
 
 AUD-18 狀態為 **公開快照已發布、後續維運設定待 owner 確認**。公開快照使用 orphan history，排除私人環境與內部 evidence；這項工作不改回既有編輯保護、Reader、首頁或 Mobile 導覽設計，也不宣稱平台已經是 turnkey production SaaS。
 

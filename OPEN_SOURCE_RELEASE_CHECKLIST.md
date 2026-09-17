@@ -18,7 +18,7 @@
 - [x] 已決定不保留原始 Git 歷史；公開 repository 使用乾淨的 orphan history，避免帶入私人網域、工作路徑或內部稽核紀錄。
 - [x] 加入 Dependabot 設定；公開 repository 已由 GitHub 啟用 Secret scanning 與 push protection。
 - [ ] 若帳號方案支援，從 GitHub Settings → Code security 開啟 Dependabot security updates、automated security fixes 與 Private vulnerability reporting。
-- [ ] 依 owner 的維護習慣設定 GitHub branch protection 與 Private vulnerability reporting。
+- [x] 已啟用 `main` branch protection：要求 Pull Request、`backend-and-unit`／`e2e` CI 通過、禁止 force push／刪除，並要求 linear history 與 conversation resolution；Private vulnerability reporting 仍待 owner 依需求開啟。
 - [ ] 決定 Issues／Discussions 的維護範圍與聯絡方式。
 
 ## 建議發布流程
