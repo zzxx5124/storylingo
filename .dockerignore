@@ -1,0 +1,15 @@
+.env
+.git
+.pytest_cache
+node_modules
+test-results
+playwright-report
+myenv
+data/model_3000.pt
+data/f5_voices.json
+data/refs/
+backend/f5.py
+storage/preview_cache
+logs/*.log
+__pycache__
+*.pyc

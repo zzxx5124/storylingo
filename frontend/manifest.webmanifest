@@ -1,0 +1,16 @@
+{
+  "name": "語閱 StoryLingo",
+  "short_name": "語閱",
+  "description": "閱讀小說，也在故事裡學習語言。",
+  "lang": "zh-Hant",
+  "start_url": "/#/home",
+  "scope": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fbf8f2",
+  "theme_color": "#b85c38",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

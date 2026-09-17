@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>語閱 StoryLingo｜閱讀小說，也在故事裡學習語言</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#b85c38">
+<meta name="description" content="免費小說閱讀與 AI 有聲朗讀平台">
+<meta property="og:type" content="website">
+<meta property="og:title" content="小說朗讀">
+<meta property="og:description" content="閱讀公開小說，使用 AI 聲音繼續你的故事">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon.svg">
+<link rel="stylesheet" href="/style.css?v=30">
+</head>
+<body>
+
+<header id="topbar">
+  <button id="btn-home" class="nav-home" title="回到首頁" aria-label="回到首頁">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none"><rect x="3" y="9" width="18" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 9l9-6 9 6" stroke="currentColor" stroke-width="1.6"/></svg>
+    <span class="nav-brand-text">語閱 <strong>StoryLingo</strong></span>
+  </button>
+  <button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="開啟導覽選單">選單</button>
+  <nav id="main-nav" aria-label="主要導覽">
+    <div class="nav-public-group" aria-label="公開閱讀">
+      <a class="nav-link platform-link" data-public-nav="home" href="#/home">首頁</a>
+      <a class="nav-link platform-link" data-public-nav="search" href="#/search">搜尋</a>
+      <a class="nav-link platform-link" data-public-nav="rankings" href="#/rankings">排行</a>
+      <a class="nav-link platform-link" data-public-nav="audiobooks" href="#/audiobooks">有聲書</a>
+      <a class="nav-link platform-link" data-public-nav="shelf" href="#/shelf" id="nav-shelf">我的書架</a>
+    </div>
+    <details id="nav-workspace-group" class="nav-workspace" hidden>
+      <summary>工作區</summary>
+      <div class="nav-workspace-menu">
+    <a class="nav-link" id="nav-apply-author" hidden href="javascript:void(0)">成為創作者</a>
+    <a class="nav-link" href="#/mine" id="nav-mine" hidden>我的作品</a>
+    <a class="nav-link" href="#/requests" id="nav-requests" hidden>申請紀錄</a>
+    <a class="nav-link" href="#/admin" id="nav-admin" hidden>後台</a>
+      </div>
+    </details>
+    <section id="mobile-workspace" hidden aria-label="工作區"></section>
+    <section id="mobile-account" hidden aria-label="帳號"></section>
+  </nav>
+  <div id="topbar-breadcrumb"></div>
+  <div id="topbar-status"></div>
+  <div id="auth-control">
+    <a class="notification-nav notification-account-link" href="#/notifications" id="nav-notifications" hidden aria-label="通知">
+      <svg class="notification-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="notification-label">通知</span>
+      <span id="notification-badge" class="notification-badge" hidden aria-label="未讀通知數量"></span>
+    </a>
+    <span id="auth-user" hidden></span>
+    <button id="btn-profile" class="btn btn-ghost" hidden type="button">個人設定</button>
+    <button id="btn-login" class="btn btn-ghost">登入</button>
+    <div id="login-modal" hidden>
+      <div class="login-card">
+        <p class="login-title">登入帳號</p>
+        <button id="btn-google-login" class="btn btn-google" type="button">使用 Google 登入</button>
+        <p id="google-unavailable-note" class="auth-helper" hidden>Google 登入目前尚未開放，請使用帳號密碼。</p>
+        <p class="auth-helper">或使用使用者名稱／信箱與密碼登入</p>
+        <input id="login-username" type="text" placeholder="使用者名稱或信箱" autocomplete="username">
+        <input id="login-password" type="password" placeholder="密碼" autocomplete="current-password">
+        <label class="login-remember"><input type="checkbox" id="login-remember" checked> 記住登入</label>
+        <button id="btn-forgot-password" class="btn btn-link" type="button">忘記密碼？</button>
+        <div id="forgot-password-panel" hidden>
+          <label class="auth-field">帳號信箱<input id="forgot-email" type="email" autocomplete="email" placeholder="輸入註冊信箱"></label>
+          <button id="btn-forgot-submit" class="btn btn-ghost" type="button">寄送重設說明</button>
+        </div>
+        <div id="reset-password-panel" hidden>
+          <p class="auth-helper">請設定新的登入密碼。</p>
+          <div id="reset-password-feedback" class="field-error reset-password-feedback" role="alert" hidden></div>
+          <input id="reset-password-new" type="password" minlength="8" autocomplete="new-password" placeholder="新密碼（至少 8 個字元）">
+          <input id="reset-password-confirm" type="password" minlength="8" autocomplete="new-password" placeholder="確認新密碼">
+          <button id="btn-reset-submit" class="btn btn-ghost" type="button">更新密碼</button>
+        </div>
+        <div class="login-actions">
+          <button id="btn-register-open" class="btn btn-ghost" type="button">建立帳號</button>
+          <button id="btn-login-cancel" class="btn btn-ghost">取消</button>
+          <button id="btn-login-submit" class="btn btn-accent">登入</button>
+        </div>
+      </div>
+    </div>
+    <div id="register-modal" hidden>
+      <div class="register-card">
+        <p class="login-title">建立你的閱讀帳號</p>
+        <p class="auth-helper">收藏作品、同步閱讀進度；日後想分享作品，也可以再申請成為作者。</p>
+        <label class="auth-field">使用者名稱<input id="register-username" type="text" minlength="2" maxlength="60" placeholder="2–30 個字元，可用中文、英文、數字或底線" autocomplete="username" required></label>
+        <label class="auth-field">電子郵件<input id="register-email" type="email" maxlength="200" placeholder="驗證信會寄到這裡" autocomplete="email" required></label>
+        <label class="auth-field">密碼<input id="register-password" type="password" minlength="8" autocomplete="new-password" placeholder="至少 8 個字元，請勿使用常見密碼" required></label>
+        <label class="auth-field">確認密碼<input id="register-confirm" type="password" minlength="8" autocomplete="new-password" placeholder="再次輸入密碼" required></label>
+        <div class="auth-policy-box">
+          <label><input id="register-terms" type="checkbox" required> 我同意<a href="#/policy/terms" target="_blank" rel="noopener">服務條款</a>與<a href="#/policy/community" target="_blank" rel="noopener">社群／內容規範</a></label>
+          <label><input id="register-privacy" type="checkbox" required> 我已閱讀<a href="#/policy/privacy" target="_blank" rel="noopener">隱私權政策</a>，了解閱讀進度、收藏與必要的服務紀錄如何使用</label>
+          <label><input id="register-age" type="checkbox" required> 我已確認符合網站使用年齡要求</label>
+        </div>
+        <div class="login-actions">
+          <button id="btn-register-cancel" class="btn btn-ghost" type="button">返回登入</button>
+          <button id="btn-register-submit" class="btn btn-accent" type="button">完成註冊</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-context"><span id="mobile-location"></span><a id="mobile-parent" href="#/home">回到首頁</a></div>
+<nav id="mobile-primary-nav" aria-label="手機主要導覽">
+  <a href="#/home" data-public-nav="home">首頁</a>
+  <a href="#/search" data-public-nav="search">搜尋</a>
+  <a href="#/shelf" data-public-nav="shelf">我的書架</a>
+  <a href="#/mine" data-public-nav="mine" id="mobile-nav-mine" hidden>我的作品</a>
+</nav>
+<main id="main">
+
+  <div id="app-bootstrap" role="status" aria-live="polite" aria-busy="true">載入中…</div>
+
+  <!-- ============ 公開小說平台 ============ -->
+  <section id="view-platform" hidden>
+    <div id="platform-root"></div>
+  </section>
+
+  <!-- ============ 書架 ============ -->
+  <section id="view-bookshelf" hidden>
+    <div class="shelf-head">
+      <h1 class="shelf-title">我的書架</h1>
+      <span class="shelf-sub" id="shelf-count"></span>
+    </div>
+
+    <div id="upload-zone" tabindex="0" class="guest-hide">
+      <div class="up-inner">
+        <div class="up-icon">
+          <svg viewBox="0 0 24 24" width="34" height="34" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-4l5-5 5 5M12 18V4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <p class="up-title">拖曳 .txt 小說到這裡</p>
+        <p class="up-hint">或點擊此處選取檔案</p>
+        <button class="btn btn-ghost up-sample-btn" id="btn-sample-txt" type="button">下載章節範例 .txt</button>
+        <input type="file" id="file-input" accept=".txt,text/plain" hidden>
+      </div>
+      <div class="up-cat-row">
+        <div class="up-cat-field">
+          <label for="upload-category">語言型別</label>
+          <select id="upload-category">
+            <option value="zh">純中文</option>
+            <option value="vocab" selected>中英單字</option>
+            <option value="bilingual">雙語</option>
+            <option value="en">純英文</option>
+            <option value="other">其它</option>
+          </select>
+        </div>
+        <div class="up-cat-field">
+          <span class="field-label">章節編號</span>
+          <label class="inline-choice"><input type="radio" name="upload-prologue" value="true"> 有序章</label>
+          <label class="inline-choice"><input type="radio" name="upload-prologue" value="false" checked> 無序章（第一篇為第 1 章）</label>
+        </div>
+        <div class="up-cat-field" id="up-vocab-level-wrap">
+          <label for="upload-vocab-level">單字難度</label>
+          <select id="upload-vocab-level">
+            <option value="AUTO" selected>自動判定</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+          </select>
+        </div>
+        <div class="up-cat-field">
+          <label for="upload-genre">小說分類</label>
+          <select id="upload-genre"><option value="">選擇分類</option></select>
+        </div>
+        <div class="up-cat-field">
+          <label for="upload-author-profile">公開作者身份</label>
+          <select id="upload-author-profile"><option value="">自動選擇</option></select>
+        </div>
+        <div class="up-cat-field up-cat-all-field">
+          <label class="up-cat-all-label">
+            <input type="checkbox" id="up-cat-all"> 放入全部分類
+          </label>
+          <div id="up-cat-list" class="up-cat-list">
+            <label><input type="checkbox" class="up-cat-check" value="zh"> 純中文</label>
+            <label><input type="checkbox" class="up-cat-check" value="vocab" checked> 中英單字</label>
+            <label><input type="checkbox" class="up-cat-check" value="bilingual"> 雙語</label>
+            <label><input type="checkbox" class="up-cat-check" value="en"> 純英文</label>
+            <label><input type="checkbox" class="up-cat-check" value="other"> 其它</label>
+          </div>
+        </div>
+        <div class="up-cat-field" id="up-split-wrap">
+          <label for="upload-split-mode">分段方式</label>
+          <select id="upload-split-mode">
+            <option value="title" selected>偵測章節標題</option>
+            <option value="chars">依字數分段</option>
+            <option value="blank">依空行/分隔線</option>
+          </select>
+        </div>
+        <div class="up-cat-field" id="up-split-chars-wrap" hidden>
+          <label for="upload-split-chars">每段字數</label>
+          <input type="number" id="upload-split-chars" value="3000" min="200" step="100">
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-filter" id="shelf-filters">
+      <button class="chip active" data-shelf="all">全部</button>
+      <button class="chip" data-shelf="zh">純中文</button>
+      <button class="chip" data-shelf="vocab">中英單字</button>
+      <button class="chip" data-shelf="bilingual">雙語</button>
+      <button class="chip" data-shelf="en">純英文</button>
+      <button class="chip" data-shelf="other">其它</button>
+    </div>
+
+    <div id="continue-banner" class="continue-banner" hidden></div>
+
+    <div id="book-list"></div>
+  </section>
+
+  <!-- ============ 章節 ============ -->
+  <section id="view-chapters" hidden>
+    <div class="ch-head">
+      <div class="ch-head-left">
+        <h2 id="ch-title"></h2>
+        <div class="ch-stats" id="ch-stats"></div>
+        <div class="ch-synopsis" id="ch-synopsis"></div>
+        <button class="btn btn-ghost" id="btn-follow" hidden>追書</button>
+        <div class="ch-cat-row"><span class="badge badge-cat" id="ch-cat"></span><span class="badge badge-cat" id="ch-cat-level" hidden></span></div>
+      </div>
+      <label class="toggle-switch guest-hide">
+        <span class="toggle-label">分析後自動生成音訊</span>
+        <input type="checkbox" id="toggle-auto-tts">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="audio-setup guest-hide" id="audio-setup" hidden>
+      <div class="audio-setup-row">
+        <label class="audio-setup-field">朗讀方式
+          <select id="sel-audio-mode">
+            <option value="single">單一朗讀聲線（最簡單）</option>
+            <option value="multi">多角色朗讀（需 AI 分析角色）</option>
+          </select>
+        </label>
+        <label class="audio-setup-field" id="single-voice-field">朗讀聲線
+          <select id="sel-default-voice"></select>
+          <button class="btn btn-ghost" id="btn-preview-default-voice" type="button">試聽</button>
+        </label>
+      </div>
+      <div class="audio-setup-hint" id="voice-lang-hint" hidden></div>
+      <div class="audio-setup-hint">單一朗讀聲線：不需分析，選好聲線即可生成音訊。多角色朗讀：先分析角色，再為每位角色設定聲線。</div>
+    </div>
+
+    <div class="ch-provider-banner" id="ch-provider-banner" hidden></div>
+
+    <div class="stepper" id="stepper">
+      <div class="step" data-step="1"><span class="step-num">1</span><span class="step-label">分析語者</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="2"><span class="step-num">2</span><span class="step-label">綁定聲線</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="3"><span class="step-num">3</span><span class="step-label">生成音訊</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="4"><span class="step-num">4</span><span class="step-label">邊聽邊學</span></div>
+    </div>
+
+    <div class="ch-progress-card guest-hide">
+      <div class="ch-progress-ring">
+        <svg viewBox="0 0 48 48" class="ring-svg">
+          <circle cx="24" cy="24" r="20" fill="none" class="ring-bg"/>
+          <circle cx="24" cy="24" r="20" fill="none" class="ring-fg" id="ring-fg"/>
+        </svg>
+        <span class="ring-pct" id="ring-pct">0%</span>
+      </div>
+      <div class="ch-progress-info">
+        <div class="ch-bar-row">
+          <span class="ch-bar-label">分析</span>
+          <div class="progress"><div class="bar bar-blue" id="bar-analyze"></div></div>
+          <span class="ch-bar-num" id="num-analyze">0/0</span>
+        </div>
+        <div class="ch-bar-row">
+          <span class="ch-bar-label">音訊</span>
+          <div class="progress"><div class="bar bar-green" id="bar-audio"></div></div>
+          <span class="ch-bar-num" id="num-audio">0/0</span>
+        </div>
+      </div>
+      <div class="ch-bulk-btns">
+        <button class="btn btn-accent" id="btn-analyze-all">分析剩餘</button>
+        <button class="btn btn-ghost" id="btn-cancel-analyze-all" hidden>取消批次分析</button>
+        <button class="btn" id="btn-tts-all">生成剩餘音訊</button>
+        <label class="corr-row bulk-corr" title="批次生成時套用文字差異.xlsx 校正唸法（顯示文字不變）">
+          <input type="checkbox" id="bulk-ttscorrect">
+          <span class="corr-name">TTS 發音校正</span>
+        </label>
+        <button class="btn btn-ghost" id="btn-book-voices">綁定全書語者</button>
+      </div>
+    </div>
+
+    <div id="book-voices-panel" class="book-voices-panel" hidden></div>
+
+    <div class="ch-hintline" id="ch-hintline"></div>
+
+    <div class="ch-filter" id="ch-filter">
+      <button class="chip active" data-filter="all">全部</button>
+      <button class="chip" data-filter="pending">未分析</button>
+      <button class="chip" data-filter="analyzed">已分析</button>
+      <button class="chip" data-filter="ready">可播放</button>
+      <button class="chip" data-filter="error">失敗</button>
+    </div>
+
+    <div id="chapter-list"></div>
+
+    <div class="ch-add-row guest-hide">
+      <button class="btn btn-ghost" id="btn-add-chapter">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        新增章節
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ 播放器 ============ -->
+  <section id="view-player" hidden>
+    <div class="player-bar">
+      <button class="btn btn-ghost" id="btn-back-chapters">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        章節列表
+      </button>
+      <div class="pl-chapter">
+        <button class="pl-chapter-btn" id="pl-chapter-btn" title="當前章節 · 點擊展開切換">
+          <span class="pl-ch-num" id="pl-ch-num"></span>
+          <span class="pl-title" id="pl-title"></span>
+          <span class="pl-caret">▾</span>
+        </button>
+        <div class="pl-chapter-list" id="pl-chapter-list" hidden></div>
+      </div>
+      <div class="player-controls">
+        <button class="btn btn-ghost btn-icon" id="btn-prev" title="上一章">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M12 20 4 12l8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="btn btn-play" id="btn-play" title="播放 / 暫停（空白鍵）">
+          <span id="play-glyph"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        </button>
+        <button class="btn btn-ghost btn-icon" id="btn-next" title="下一章">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M12 20l8-8-8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <span id="pl-time" class="pl-time"></span>
+      <div class="pl-speed">
+        <label class="pl-speed-label">播放速度</label>
+        <select id="pl-speed" title="播放速度">
+          <option value="0.75">0.75×（慢速）</option>
+          <option value="0.85">0.85×</option>
+          <option value="1">1×</option>
+          <option value="1.25">1.25×</option>
+          <option value="1.5">1.5×</option>
+          <option value="2">2×</option>
+        </select>
+      </div>
+      <label class="toggle-switch toggle-sm" title="一章播完自動接續下一章">
+        <span class="toggle-label">自動連播</span>
+        <input type="checkbox" id="toggle-autonext" checked>
+        <span class="toggle-slider"></span>
+      </label>
+      <label class="toggle-switch toggle-sm" title="播放時保持螢幕常亮（避免看畫面時自動鎖屏）">
+        <span class="toggle-label">螢幕常亮</span>
+        <input type="checkbox" id="toggle-wake" checked>
+        <span class="toggle-slider"></span>
+      </label>
+      <div class="audio-wave" id="audio-wave"><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+
+    <div id="player-wrap">
+      <div id="player-left">
+        <div id="transcript"></div>
+      </div>
+      <aside id="player-right" class="player-sidebar">
+        <div class="sidebar-section">
+          <h3 class="sidebar-head">角色聲線</h3>
+          <p class="sidebar-hint">綁定聲線請回「章節列表」展開該章節</p>
+          <div id="voice-mapping"></div>
+        </div>
+        <div class="sidebar-section">
+          <h3 class="sidebar-head">本章單字</h3>
+          <div id="vocab-list"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+<!-- ============ 我的創作 ============ -->
+  <section id="view-mine" hidden>
+    <div class="shelf-head">
+      <h1 class="shelf-title">我的創作</h1>
+      <span class="shelf-sub" id="mine-count"></span>
+      <a class="btn btn-ghost" href="#/requests">申請紀錄</a>
+      <button class="btn btn-accent" id="btn-new-book" type="button">＋ 建立新作品</button>
+    </div>
+    <div id="mine-list"></div>
+  </section>
+
+  <!-- ============ 內容申請 ============ -->
+  <section id="view-requests" hidden>
+    <div class="shelf-head">
+      <h1 class="shelf-title">內容申請</h1>
+      <span class="shelf-sub">查看送審、審核與退回原因</span>
+    </div>
+    <div id="request-list"></div>
+  </section>
+
+  <!-- ============ 後台 ============ -->
+  <section id="view-admin" hidden>
+    <div class="admin-grid" id="admin-stats"></div>
+    <div class="admin-tabs">
+      <button class="chip" data-atab="overview" aria-label="後台概覽">概覽</button>
+      <button class="chip active" data-atab="review">審核</button>
+      <button class="chip" data-atab="ownership">所有權轉移</button>
+      <button class="chip" data-atab="books">作品</button>
+      <button class="chip" data-atab="categories">類別</button>
+      <button class="chip" data-atab="banners">首頁輪播</button>
+      <button class="chip" data-atab="announcements">公告</button>
+      <button class="chip" data-atab="jobs">生成任務</button>
+      <button class="chip" data-atab="generation">生成運維</button>
+      <button class="chip" data-atab="tts">TTS 服務</button>
+      <button class="chip" data-atab="ai">AI 服務</button>
+      <button class="chip" data-atab="audit">稽核紀錄</button>
+      <button class="chip" data-atab="authors">作者申請</button>
+      <button class="chip" data-atab="reports">檢舉</button>
+      <button class="chip" data-atab="users">使用者</button>
+    </div>
+    <div id="admin-panel"></div>
+  </section>
+
+  <!-- ============ 個人設定 ============ -->
+  <section id="view-settings" hidden>
+    <div id="settings-page" class="settings-page" aria-busy="false">
+      <div class="settings-page-header">
+        <div>
+          <p class="eyebrow">ACCOUNT</p>
+          <h1>個人設定</h1>
+          <p class="settings-lede">管理登入帳號、公開身份與作者 profile。三者彼此分開，不會因修改設定而改變作品所有權。</p>
+        </div>
+        <a class="btn btn-ghost" href="#/home">回到探索</a>
+      </div>
+      <p id="settings-status" class="settings-status" role="status" aria-live="polite" hidden></p>
+      <button id="settings-retry" class="btn btn-ghost" type="button" hidden>重新載入最新設定</button>
+      <div class="settings-grid">
+        <section class="settings-card" aria-labelledby="settings-account-heading">
+          <h2 id="settings-account-heading">登入帳號</h2>
+          <p class="settings-muted">這些欄位是帳號安全資料，不能在此直接改寫角色。</p>
+          <div class="settings-readonly-grid">
+            <label for="settings-username">使用者名稱<input id="settings-username" type="text" readonly></label>
+            <label for="settings-role">目前角色<input id="settings-role" type="text" readonly></label>
+            <label for="settings-account-status">帳號狀態<input id="settings-account-status" type="text" readonly></label>
+          </div>
+        </section>
+        <section class="settings-card" aria-labelledby="settings-public-heading">
+          <h2 id="settings-public-heading">Public Profile 公開身份</h2>
+          <p class="settings-muted">讀者在公開平台看到的名稱與簡介，不是登入 username。</p>
+          <label for="settings-display-name">公開顯示名稱<input id="settings-display-name" type="text" maxlength="50" required></label>
+          <label for="settings-bio">公開簡介<textarea id="settings-bio" maxlength="1000" rows="5" placeholder="簡單介紹自己（選填）"></textarea></label>
+          <label for="settings-avatar-file">公開頭像<input id="settings-avatar-file" type="file" accept="image/jpeg,image/png,image/webp"></label>
+        </section>
+        <section class="settings-card" aria-labelledby="settings-email-heading">
+          <h2 id="settings-email-heading">電子郵件與安全</h2>
+          <p class="settings-muted">電子郵件變更需要重新驗證；驗證完成前，原有登入與 recovery 規則不變。</p>
+          <label for="settings-email">電子郵件<input id="settings-email" type="email" maxlength="200" autocomplete="email"></label>
+          <p id="settings-email-status" class="settings-inline-status" role="status" aria-live="polite"></p>
+          <div id="settings-password-box" class="settings-security-box">
+            <label for="settings-current-password">目前密碼<input id="settings-current-password" type="password" autocomplete="current-password" placeholder="已有密碼時必填"></label>
+            <label for="settings-new-password">新密碼<input id="settings-new-password" type="password" minlength="8" autocomplete="new-password" placeholder="至少 8 個字元"></label>
+            <button id="settings-password-save" class="btn btn-ghost" type="button">設定密碼</button>
+          </div>
+          <div class="settings-login-methods">
+            <h3>登入方式</h3>
+            <div id="settings-identities" aria-live="polite"></div>
+          </div>
+        </section>
+        <section class="settings-card" aria-labelledby="settings-author-heading">
+          <h2 id="settings-author-heading">Author Profile 作者身份</h2>
+          <p class="settings-muted">作者筆名與作品公開署名可獨立於 Account 角色管理。</p>
+          <div id="settings-author-list"></div>
+        </section>
+      </div>
+      <div class="settings-actions">
+        <button id="settings-discard" class="btn btn-ghost" type="button" disabled>放棄未儲存修改</button>
+        <button id="settings-save" class="btn btn-accent" type="button">儲存個人設定</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- 所有權轉移（一般邀請與 Super Admin 緊急路徑共用表單；權限由後端判定） -->
+<div id="ownership-transfer-modal" class="modal-overlay" hidden>
+  <div class="modal-card ownership-transfer-modal-card">
+    <p class="modal-title" id="ot-title">轉移作品所有權</p>
+    <p class="modal-subtitle" id="ot-hint"></p>
+    <label class="auth-field" for="ot-target">目標帳號<select id="ot-target" required></select></label>
+    <label class="auth-field" for="ot-reason">原因（選填；緊急轉移必填）<textarea id="ot-reason" maxlength="500" rows="4" placeholder="說明這次轉移的原因"></textarea></label>
+    <div class="modal-actions"><button class="btn btn-ghost" id="ot-cancel" type="button">取消</button><button class="btn btn-accent" id="ot-submit" type="button">送出轉移</button></div>
+  </div>
+</div>
+
+<!-- 新增章節 Modal -->
+<div id="chapter-modal" class="modal-overlay chapter-editor" role="dialog" aria-modal="true" aria-labelledby="chapter-editor-title" hidden>
+  <div class="modal-card">
+    <header class="chapter-editor-header">
+      <p id="chapter-editor-book" class="modal-subtitle"></p>
+      <h2 id="chapter-editor-title" class="modal-title">新增章節</h2>
+      <p class="modal-subtitle">專心寫作。儲存內容後，再回作品管理安排發布與朗讀。</p>
+    </header>
+    <div class="chapter-editor-body">
+      <label for="new-ch-title">章節標題</label>
+      <input id="new-ch-title" type="text" placeholder="可留空，自動命名" maxlength="100">
+      <label for="new-ch-text">章節內容</label>
+      <textarea id="new-ch-text" placeholder="從這裡開始你的故事…" aria-describedby="chapter-editor-status" spellcheck="false"></textarea>
+      <button id="chapter-draft-discard" class="btn btn-ghost" type="button" hidden>捨棄暫存並重新載入</button>
+      <details id="chapter-revisions" hidden>
+        <summary>版本歷史</summary>
+        <div id="chapter-revisions-list"></div>
+      </details>
+    </div>
+    <footer class="modal-actions chapter-editor-footer">
+      <div class="chapter-editor-feedback"><span id="chapter-editor-count">0 字</span><span id="chapter-editor-status" role="status" aria-live="polite"></span><button id="chapter-editor-retry" class="btn btn-ghost" type="button" hidden>重新載入</button></div>
+      <button class="btn btn-ghost" id="new-ch-cancel">取消</button>
+      <button class="btn btn-accent" id="new-ch-submit">加入</button>
+    </footer>
+  </div>
+</div>
+
+<!-- 作者作品統計 Modal -->
+<div id="bookstats-modal" class="modal-overlay" hidden>
+  <div class="modal-card">
+    <p class="modal-title" id="bookstats-title">作品統計</p>
+    <div id="bookstats-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="bookstats-close">關閉</button>
+    </div>
+  </div>
+</div>
+
+<!-- 單字發音 Popup -->
+<div id="vocab-popup" class="vocab-popup" hidden>
+  <button class="vocab-popup-close">×</button>
+  <div class="vocab-popup-word"></div>
+  <div class="vocab-popup-zh"></div>
+  <div class="vocab-popup-lv"></div>
+  <button class="btn btn-accent vocab-popup-play">播放發音</button>
+</div>
+
+<!-- 書籍編輯 Modal -->
+<div id="book-edit-modal" class="modal-overlay" hidden>
+  <div class="modal-card">
+    <p class="modal-title" id="book-edit-title">編輯書籍</p>
+    <div class="book-editor-status" role="status" aria-live="polite">
+      <span id="book-editor-status"></span>
+      <button class="btn btn-ghost" id="book-editor-retry" type="button" hidden>重新載入最新資料</button>
+    </div>
+    <input id="be-title" type="text" placeholder="書名" maxlength="200">
+   <input id="be-tags" type="text" placeholder="標籤（逗號分隔）" maxlength="500">
+   <textarea id="be-synopsis" placeholder="簡介"></textarea>
+    <label for="be-language-type">語言型別</label>
+    <select id="be-language-type"></select>
+    <p class="modal-subtitle" id="be-language-type-hint" hidden></p>
+    <span class="field-label">章節編號</span>
+    <label class="inline-choice"><input type="radio" name="be-prologue" value="true"> 有序章</label>
+    <label class="inline-choice"><input type="radio" name="be-prologue" value="false"> 無序章（第一篇為第 1 章）</label>
+    <select id="be-category"><option value="">小說分類</option></select>
+    <select id="be-serial">
+      <option value="連載">連載中</option>
+      <option value="完結">已完結</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="be-cancel">取消</button>
+      <button class="btn btn-accent" id="be-submit">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 建立作品 Modal -->
+<div id="newbook-modal" class="modal-overlay" hidden>
+  <div class="modal-card">
+    <p class="modal-title">建立新作品</p>
+    <p class="modal-subtitle">先填基本資料，建立後馬上寫第一章；不需要先準備檔案。</p>
+    <input id="nb-title" type="text" placeholder="書名" maxlength="200">
+    <textarea id="nb-synopsis" placeholder="簡介（選填）"></textarea>
+      <div class="modal-grid">
+      <select id="nb-category">
+        <option value="zh">純中文</option>
+        <option value="vocab" selected>中英單字</option>
+        <option value="bilingual">雙語</option>
+        <option value="en">純英文</option>
+        <option value="other">其它</option>
+      </select>
+      <select id="nb-serial">
+        <option value="連載" selected>連載中</option>
+        <option value="完結">已完結</option>
+        </select>
+      </div>
+      <span class="field-label">章節編號</span>
+      <label class="inline-choice"><input type="radio" name="nb-prologue" value="true"> 有序章</label>
+      <label class="inline-choice"><input type="radio" name="nb-prologue" value="false" checked> 無序章（第一篇為第 1 章）</label>
+      <select id="nb-genre" style="margin-top:8px"><option value="">小說分類（選填）</option></select>
+      <select id="nb-author-profile" style="margin-top:8px"><option value="">公開作者身份（自動選擇）</option></select>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="nb-cancel">取消</button>
+      <button class="btn btn-accent" id="nb-submit">建立作品</button>
+    </div>
+  </div>
+</div>
+
+<!-- 帳號與作者 profile 設定 -->
+<div id="profile-modal" class="modal-overlay" hidden>
+  <div class="modal-card">
+    <p class="modal-title">個人設定</p>
+    <p class="modal-subtitle">登入帳號維持不變；公開顯示名稱與作者筆名可以分開設定。</p>
+    <label class="auth-field">公開顯示名稱<input id="profile-display-name" type="text" maxlength="50" required></label>
+    <label class="auth-field">公開簡介<textarea id="profile-bio" maxlength="1000" placeholder="簡單介紹自己（選填）"></textarea></label>
+    <label class="auth-field">電子郵件<input id="profile-email" type="email" maxlength="200"></label>
+    <p id="profile-email-status" class="modal-subtitle"></p>
+    <label class="auth-field">公開頭像<input id="profile-avatar-file" type="file" accept="image/jpeg,image/png,image/webp"></label>
+    <div id="profile-security">
+      <p class="field-label">登入方式</p>
+      <div id="profile-identities"></div>
+      <div id="profile-password-box">
+        <input id="profile-current-password" type="password" autocomplete="current-password" placeholder="目前密碼（已有密碼時必填）">
+        <input id="profile-new-password" type="password" minlength="8" autocomplete="new-password" placeholder="設定／變更密碼（至少 8 個字元）">
+        <button id="profile-password-save" class="btn btn-ghost" type="button">設定密碼</button>
+      </div>
+    </div>
+    <div id="profile-author-list"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="profile-cancel" type="button">取消</button>
+      <button class="btn btn-accent" id="profile-save" type="button">儲存設定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 申請成為創作者 Modal -->
+<div id="apply-author-modal" class="modal-overlay" hidden>
+  <div class="modal-card">
+    <p class="modal-title">成為創作者</p>
+    <p class="modal-subtitle">成為創作者後，你就可以建立自己的小說、朗讀有聲書，並在故事裡幫助讀者學習語言。</p>
+    <div id="apply-status" class="apply-status" hidden></div>
+    <div id="apply-form">
+      <p class="modal-subtitle">送出申請後，站方審核通過即可開始創作。</p>
+      <input id="apply-pen-name" type="text" placeholder="創作者顯示名稱（預設為你的帳號名稱）" minlength="1" maxlength="80">
+      <textarea id="apply-bio" placeholder="簡單介紹你自己（選填）" maxlength="1000"></textarea>
+      <label class="apply-rights"><input type="checkbox" id="apply-rights"> 我保證上傳內容為原創或已取得合法授權</label>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="apply-cancel">取消</button>
+        <button class="btn btn-accent" id="apply-submit">送出申請</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div><strong>語閱 StoryLingo</strong><span>閱讀小說，也在故事裡學習語言。</span></div>
+  <nav aria-label="網站資訊"><a href="#/policy">使用條款</a><a href="#/policy/privacy">隱私政策</a><a href="mailto:maintainers@example.com">問題回報：maintainers@example.com</a></nav>
+</footer>
+
+<script src="/services/api.js?v=1"></script>
+<script src="/services/escape.js?v=1"></script>
+<script src="/services/pagination.js?v=1"></script>
+<script src="/services/toast.js?v=1"></script>
+<script src="/services/workflow.js?v=1"></script>
+<script src="/services/bootstrap.js?v=1"></script>
+<script src="/services/announcements.js?v=1"></script>
+<script src="/services/notifications.js?v=1"></script>
+<script src="/services/audiobooks.js?v=1"></script>
+<script src="/services/public-navigation.js?v=3"></script>
+<script src="/services/reader.js?v=2"></script>
+<script src="/admin/admin-console.js?v=1"></script>
+<script type="module" src="/components/index.js?v=2"></script>
+<script src="/app.js?v=43"></script>
+<script src="/platform.js?v=16"></script>
+<script src="/seo.js?v=14"></script>
+<script src="/release.js?v=1"></script>
+</body>
+</html>

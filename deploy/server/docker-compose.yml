@@ -1,0 +1,22 @@
+services:
+  web:
+    build: .
+    image: storylingo-web:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      APP_ENV: production
+      PORT: 8000
+      PUBLIC_ORIGINS: https://reader.example.com
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./runtime/data:/app/data
+      - ./runtime/storage:/app/storage
+      - ./runtime/uploads:/app/uploads
+      - ./runtime/logs:/app/logs
+    networks:
+      - storylingo
+
+networks:
+  storylingo:

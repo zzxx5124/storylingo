@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>共用元件預覽 (FE-006 / FE-021)</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+  body { padding: 26px; max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 20px; }
+  section { margin: 26px 0; padding: 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
+  section h2 { font-size: 15px; margin: 0 0 14px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .note { font-size: 12px; color: var(--dim); margin: 0 0 10px; }
+</style>
+</head>
+<body>
+  <h1>共用元件預覽</h1>
+  <p class="note">此頁僅供開發測試（noindex），實際使用可於 module 頁面 <code>import { button, input, modal, toast, bookCard }</code>。</p>
+
+  <section id="sec-button">
+    <h2>Button</h2>
+    <div class="row">
+      <button class="btn btn-primary">主要按鈕</button>
+      <button class="btn btn-secondary">次要按鈕</button>
+      <button class="btn btn-ghost">Ghost</button>
+      <button class="btn btn-danger">危險</button>
+      <button class="btn btn-ghost btn-icon" aria-label="關閉">✕</button>
+      <button class="btn btn-primary" disabled>停用</button>
+    </div>
+  </section>
+
+  <section id="sec-field">
+    <h2>Field (Input / Select / Textarea)</h2>
+    <div id="field-demo"></div>
+  </section>
+
+  <section id="sec-card">
+    <h2>Toast</h2>
+    <div class="row">
+      <button class="btn btn-secondary" data-toast="success" data-toast-label="成功">成功 Toast</button>
+      <button class="btn btn-secondary" data-toast="error" data-toast-label="錯誤">錯誤 Toast</button>
+      <button class="btn btn-secondary" data-toast="warning" data-toast-label="警告">警告 Toast</button>
+      <button class="btn btn-secondary" data-toast="info" data-toast-label="資訊">資訊 Toast</button>
+    </div>
+  </section>
+
+  <section id="sec-modal">
+    <h2>Modal</h2>
+    <div class="row">
+      <button class="btn btn-primary" data-modal="basic">開啟 Modal</button>
+      <button class="btn btn-secondary" data-modal="collect">收藏確認</button>
+    </div>
+  </section>
+
+  <section id="sec-bookcard">
+    <h2>BookCard</h2>
+    <div class="grid" id="bookcard-demo"></div>
+  </section>
+
+  <section id="sec-foundation" class="foundation-demo">
+    <h2>Design System Foundation</h2>
+    <div id="foundation-demo"></div>
+  </section>
+
+  <script type="module">
+    import { input, select, textarea, modal, closeModal, toast, bookCard, button, statusBadge, statusState, pageHeader, filterBar, pagination } from "/components/index.js";
+
+    document.getElementById("field-demo").innerHTML =
+      input({ id: "demo-title", label: "書名", placeholder: "輸入書名", required: true, help: "必填欄位" }) +
+      select({
+        id: "demo-cat", label: "分類", value: "fantasy",
+        options: [
+          { value: "fantasy", label: "奇幻" },
+          { value: "scifi", label: "科幻" },
+          { value: "romance", label: "言情" },
+        ],
+      }) +
+      textarea({ id: "demo-intro", label: "簡介", rows: 3, maxlength: 200, help: "最多 200 字" }) +
+      input({ id: "demo-bad", label: "錯誤示範", error: "此欄位輸入無效" });
+
+    document.querySelectorAll("[data-toast]").forEach((btn) => {
+      btn.addEventListener("click", () => toast(`這是${btn.dataset.toastLabel}通知訊息`, { type: btn.dataset.toast }));
+    });
+
+    let activeModal = null;
+    document.querySelector('[data-modal="basic"]').addEventListener("click", () => {
+      activeModal = modal({
+        title: "基本對話框",
+        content: "<p>這是由 NovelUI Modal 元件建立的內容</p>",
+        footer: '<button class="btn btn-primary modal-confirm">確認</button>',
+      });
+      document.querySelector(".modal-confirm").addEventListener("click", () => closeModalByEvent());
+    });
+
+    document.querySelector('[data-modal="collect"]').addEventListener("click", () => {
+      activeModal = modal({
+        title: "收藏確認",
+        content: "<p>確定要將《測試書名》加入收藏嗎？</p>",
+        footer: '<button class="btn btn-secondary modal-cancel">取消</button><button class="btn btn-primary modal-ok">加入收藏</button>',
+      });
+      document.querySelector(".modal-ok").addEventListener("click", () => {
+        closeModalByEvent();
+        toast.success("已加入收藏");
+      });
+      const cancel = document.querySelector(".modal-cancel");
+      if (cancel) cancel.addEventListener("click", () => closeModalByEvent());
+    });
+
+    function closeModalByEvent() {
+      if (activeModal) activeModal.close();
+      else closeModal();
+    }
+
+    document.getElementById("bookcard-demo").innerHTML = [
+      {
+        bookId: "demo-sword", title: "劍起蒼穹", author: "清風道人", score: 8.9,
+        tags: ["奇幻", "修仙"], lastChapterTitle: "第 120 章 飛升",
+        intro: "少年拾得一把古劍，自此踏入修仙之路……",
+      },
+      {
+        bookId: "demo-star", title: "星海旅人", author: "夜航者", score: 0,
+        tags: ["科幻", "冒險"], intro: "一艘失蹤百年的殖民艦再度現身。",
+      },
+    ].map(bookCard).join("");
+
+    document.getElementById("foundation-demo").innerHTML =
+      pageHeader({
+        eyebrow: "可存取 proof surface",
+        title: "共用互動基礎",
+        description: "以語意化狀態、長繁中與窄版排版驗證後續工作流可重用的 contract。",
+        action: button({ label: "主要操作", variant: "primary" }),
+        level: 3,
+      }) +
+      filterBar({
+        label: "範例篩選",
+        content: '<label class="foundation-demo-filter"><span>狀態</span><select><option>全部</option><option>待處理</option></select></label>',
+        actions: button({ label: "套用篩選", variant: "secondary" }),
+      }) +
+      `<div class="foundation-demo-statuses">${statusBadge({ label: "待審核", tone: "pending", icon: "!" })}${statusBadge({ label: "已完成", tone: "success", icon: "✓" })}</div>` +
+      statusState({ type: "empty", title: "目前沒有待處理項目", message: "這個狀態使用文字說明，不只依賴顏色。", action: button({ label: "重新整理", variant: "ghost" }) }) +
+      statusState({ type: "error", title: "載入失敗示範", message: "可使用鍵盤操作重新整理。", action: button({ label: "再試一次", variant: "danger" }) }) +
+      pagination({ page: 2, totalPages: 4, total: 68, hrefForPage: (page) => `#foundation-page-${page}`, label: "範例分頁" });
+
+    window.closeModalByEvent = closeModalByEvent;
+  </script>
+</body>
+</html>

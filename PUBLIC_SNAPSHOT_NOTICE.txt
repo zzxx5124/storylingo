@@ -1,0 +1,4 @@
+StoryLingo public snapshot
+Generated: 2026-09-17
+This snapshot excludes Git history, local environment files, databases, uploads, logs, models and private deployment evidence.
+Before publishing, choose and add a LICENSE, review OPEN_SOURCE_RELEASE_CHECKLIST.md, then run a fresh secret scan.

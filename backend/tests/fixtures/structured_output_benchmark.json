@@ -1,0 +1,14 @@
+{
+  "source": "historical-benchmark",
+  "provider": "OpenAI-compatible",
+  "model": "gpt-4o-mini",
+  "productionPrompt": true,
+  "concurrency": 2,
+  "runs": [
+    {"mode": "json_object", "chunkSize": 6000, "success": 0, "total": 2, "malformed": 2},
+    {"mode": "json_object", "chunkSize": 4000, "success": 2, "total": 3, "malformed": 1},
+    {"mode": "json_object", "chunkSize": 3000, "success": 3, "total": 4, "malformed": 1},
+    {"mode": "json_schema", "chunkSize": 3000, "success": 4, "total": 4, "malformed": 0, "wallSeconds": 98.6}
+  ],
+  "interpretation": "acceptance evidence and design motivation only; values are not runtime requirements"
+}

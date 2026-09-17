@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-and-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          npm ci
+      - name: Backend tests
+        run: python -m pytest backend/tests -q
+      - name: Frontend unit tests
+        run: npm run test:unit
+      - name: Syntax and compile checks
+        run: |
+          node --check frontend/app.js
+          node --check frontend/platform.js
+          python -m compileall backend
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Browser regression
+        # The suite covers both Desktop and Mobile. One worker keeps browser
+        # contexts reliable on small hosted runners; local runs may opt in to
+        # more workers when the machine has enough memory.
+        run: npm run test:e2e -- --workers=1
