@@ -1,5 +1,7 @@
 # StoryLingo 語閱
 
+[![CI](https://github.com/zzxx5124/storylingo/actions/workflows/ci.yml/badge.svg)](https://github.com/zzxx5124/storylingo/actions/workflows/ci.yml)
+
 StoryLingo 是一個以長篇小說為核心的開源參考平台，讓讀者可以探索作品、閱讀、聽書與進行語言學習，也讓作者能建立作品、管理章節與追蹤內容狀態。
 
 這個 repository 的定位是**可審查、可學習、可自行延伸的 reference implementation**。它不是一鍵即可承擔正式流量的 SaaS 套件；正式部署仍需要自行完成密鑰管理、郵件／OAuth、資料庫備份、外部 TTS 服務、網域與監控設定。產品與工程稽核紀錄請從 [`PRODUCT_ENGINEERING_AUDIT.md`](PRODUCT_ENGINEERING_AUDIT.md) 開始閱讀。
@@ -56,6 +58,13 @@ python run.py
 ```
 
 開啟 <http://127.0.0.1:8000/>。首次啟動請在 `.env` 設定一組只供本機使用的 `ADMIN_PASSWORD`；AI 與 TTS 是可選 provider，沒有設定時仍可使用不依賴它們的瀏覽與閱讀流程。
+
+從 GitHub 取得目前公開 reference 快照：
+
+```powershell
+git clone https://github.com/zzxx5124/storylingo.git
+Set-Location storylingo
+```
 
 不要把 `.env`、`data/`、`storage/`、`uploads/`、`logs/` 或任何測試資料複製到公開 repository。`.env.example` 只放欄位名稱與佔位值，真正的值應由本機 secret manager 或部署平台注入。
 
