@@ -46,7 +46,7 @@ flowchart LR
 
 ## 本機開發
 
-需求：Python 3.10+、Node.js 20+、npm。Windows PowerShell 範例：
+需求：Python 3.10+、Node.js 22.22.2+、npm。Windows PowerShell 範例：
 
 ```powershell
 python -m venv .venv
