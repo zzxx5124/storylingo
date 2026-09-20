@@ -71,11 +71,13 @@ def main() -> int:
             fail(f"BackgroundTasks is forbidden in backend source: {path.relative_to(ROOT)}")
 
     # Application frontend code must use NovelApi rather than introducing a new
-    # transport boundary. Service Worker, API adapter and browser tests are explicit exceptions.
+    # transport boundary. Service Worker, API adapter, release infrastructure,
+    # and browser tests are explicit exceptions.
     for path in iter_text_files(ROOT / "frontend", (".js", ".mjs", ".cjs")):
         rel = path.relative_to(ROOT).as_posix()
         if (
             rel == "frontend/services/api.js"
+            or rel == "frontend/release.js"
             or rel == "frontend/sw.js"
             or rel.startswith("frontend/e2e/")
             or "/__tests__/" in rel
