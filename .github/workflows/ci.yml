@@ -38,6 +38,23 @@ jobs:
           node --check frontend/platform.js
           python -m compileall backend
 
+  architecture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Architecture guardrails
+        run: python scripts/architecture_guard.py
+      - name: Production runtime smoke
+        run: python scripts/production_smoke.py
+
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 30
