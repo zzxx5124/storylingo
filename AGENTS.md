@@ -31,7 +31,7 @@
 - 小步修改；改動範圍以任務目標為限。
 
 ## 4. 資料真源不可混淆
-- 業務資料真源是 `backend/db.py`（SQLite）；`storage/books/{bid}` 是生成產物。
+- **SQLite database 是業務資料真源**；目前 `backend/db.py` 是集中式 persistence/schema boundary。`storage/books/{bid}` 是生成產物，不是業務狀態真源。
 - 生成任務必須走 DB 佇列（`backend/jobs.py`），**不要**改回 FastAPI BackgroundTasks。
 - 不得讓同一業務狀態同時由多套互不一致的欄位／table／cache 成為「真源」。
 - V4 canonical 資料模型（`ai_providers`／`chapter_analyses`／`audio_generations`／`tts_providers`）以 `backend/v4_contracts.py` 與實際 schema 為準。
@@ -60,12 +60,19 @@
 - 跨層行為變更需補 integration regression，而不是只測新增 helper。
 - 不得宣告任務完成，除非 completion criteria 與 regression tests 都成立。
 
-## 8. 文件同步
-- 專案主要 Markdown 只有三份：`AGENTS.md`（規則）、`PROJECT_MAP.md`（功能位置）、`ARCHITECTURE.md`（現況架構）。
+## 8. 文件治理
+三份核心文件的權責固定如下，不互相取代：
+
+- `AGENTS.md` = **規則（Rules）**：AI 協作、安全、測試、Git 與 scope 邊界。
+- `PROJECT_MAP.md` = **位置（Where）**：功能／模組在哪裡，以及應從哪個入口尋找實作。
+- `ARCHITECTURE.md` = **現況與不變條件（Why / Invariants）**：目前已實作的資料流、模組邊界、安全 invariant 與必要 failure semantics。
+
+三份文件是唯一授權的 current architecture documents；Git history 是版本歷史，不另建 HISTORY／ARCHIVE／SUMMARY 文件。
+
 - 改動行為、API、部署方式時，同步更新 `ARCHITECTURE.md`；新增／移動／刪除重要模組時更新 `PROJECT_MAP.md`。
-- 不過度文件化：只有影響理解或維運的變更才寫文件。
 - `ARCHITECTURE.md` 只描述「目前實際已經完成到哪裡」，不得提前把未實作設計寫成現況。
-- 版本歷史交給 Git history，不要另建 Markdown 歷史文件。
+- `PROJECT_MAP.md` 以「我要修改 X，先去哪裡」為目的，避免複製完整 architecture narrative。
+- 不過度文件化：只有影響理解或維運的變更才寫文件。
 
 ## 9. 提交與 Git 工作規則
 - 除非被明確要求，否則**不**執行 git commit／push／merge。
@@ -120,3 +127,14 @@
 - 失敗、漏測或小型 regression 必須先查 root cause、在 scope 內修正並重測；只有互斥產品決策、缺少必要 secrets、不可逆 production/destructive operation、明確衝突 invariant/spec 等情況才能以 `BLOCKED_BY_USER_DECISION` 停止，並列出 blocker、選項、推薦與後果。
 - 主 Agent 是 integrator；subagent 只能在有限 scope 內工作，且需使用相同模型、不得自行改架構決策，產出必須由主 Agent 以 repository evidence 驗證。若 delegation 不可用，主 Agent 依序模擬 review roles。
 - 除非明確要求，不自動 commit/push/merge；需提交時只 stage 任務相關檔案，先檢查完整 diff、secrets、placeholder、TODO 與 dirty scope。
+
+## 13. Architecture Guardrails
+
+CI 會執行 `python scripts/architecture_guard.py`，將部分最重要的永久 invariant 轉成可機械檢查的 repository gate：
+
+- 三份 current architecture documents 必須存在且保留 canonical markers。
+- backend 不得重新引入 `BackgroundTasks`。
+- application frontend 不得在 `frontend/services/api.js`、Service Worker、E2E/test 等明確例外之外新增裸 `fetch()`。
+- live frontend 不得重新呼叫 legacy `/api/analyze` 或 `/api/tts`。
+
+Guardrail 是「防止已知退化」而不是替代 code review；若規則與實際 repository 不一致，先修正 root cause 與文件，再調整 guard。
