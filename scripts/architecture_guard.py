@@ -89,9 +89,14 @@ def main() -> int:
         if re.search(r"\bfetch\s*\(", text):
             fail(f"direct fetch() detected outside the canonical API boundary: {rel}")
 
-        for legacy in ("/api/analyze", "/api/tts"):
-            if legacy in text:
-                fail(f"legacy generation endpoint caller detected in {rel}: {legacy}")
+        # Only flag actual calls to the legacy endpoint, not documentation or
+        # admin links such as /api/tts/spec.
+        legacy_call = re.search(
+            r"(?:\bapi|\bNovelApi\.request)\s*\(\s*[\"'`]\/api\/(?:analyze|tts)(?:[\"'`])",
+            text,
+        )
+        if legacy_call:
+            fail(f"legacy generation endpoint caller detected in {rel}: {legacy_call.group(0)}")
 
     # Cross-document terminology that must remain stable.
     for marker in ("generation_jobs", "SQLite", "NovelApi"):
