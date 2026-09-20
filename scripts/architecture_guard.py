@@ -46,12 +46,13 @@ def main() -> int:
     project_map = (ROOT / "PROJECT_MAP.md").read_text(encoding="utf-8")
     architecture = (ROOT / "ARCHITECTURE.md").read_text(encoding="utf-8")
 
+    # AGENTS.md is the policy document. Check only policy markers that belong
+    # there; implementation/domain identifiers are guarded in the map/architecture docs below.
     required_agent_rules = (
         "AGENTS.md",
         "PROJECT_MAP.md",
         "ARCHITECTURE.md",
         "NovelApi",
-        "generation_jobs",
         "SQLite",
         "root cause",
         "browser-first",
